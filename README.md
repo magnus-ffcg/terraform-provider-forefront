@@ -17,7 +17,7 @@ To use this provider in your Terraform configuration, add the following to your 
 terraform {
   required_providers {
     forefront = {
-      source = "magnus-ffcg/forefront"
+      source = "magnus-ffcg/terraform-provider-forefront"
     }
   }
 }
