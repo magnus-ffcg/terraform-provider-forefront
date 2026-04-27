@@ -1,4 +1,4 @@
-module github.com/magnus-ffcg/terraform-provider
+module github.com/magnus-ffcg/terraform-provider-forefront
 
 go 1.25.8
 
