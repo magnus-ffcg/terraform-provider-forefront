@@ -70,6 +70,7 @@ func (p *ForefrontProvider) Functions(ctx context.Context) []func() function.Fun
 	return []func() function.Function{
 		NewLookupFunction,
 		NewReplaceDeepFunction,
+		NewReplaceDeepMapFunction,
 	}
 }
 

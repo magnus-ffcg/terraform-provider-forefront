@@ -53,7 +53,9 @@ func (f ReplaceDeepFunction) Run(ctx context.Context, req function.RunRequest, r
 		return
 	}
 
-	newUnder, err := replaceDeepVal(ctx, inputVal, search, replace)
+	newUnder, err := replaceDeepVal(ctx, inputVal, func(s string) string {
+		return strings.ReplaceAll(s, search, replace)
+	})
 	if err != nil {
 		resp.Error = function.NewFuncError(err.Error())
 		return
@@ -67,7 +69,7 @@ func (f ReplaceDeepFunction) Run(ctx context.Context, req function.RunRequest, r
 	resp.Error = resp.Result.Set(ctx, resultDynamic)
 }
 
-func replaceDeepVal(ctx context.Context, v attr.Value, search, replace string) (attr.Value, error) {
+func replaceDeepVal(ctx context.Context, v attr.Value, modifier func(string) string) (attr.Value, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -77,7 +79,7 @@ func replaceDeepVal(ctx context.Context, v attr.Value, search, replace string) (
 		if val.IsNull() || val.IsUnknown() {
 			return val, nil
 		}
-		newUnder, err := replaceDeepVal(ctx, val.UnderlyingValue(), search, replace)
+		newUnder, err := replaceDeepVal(ctx, val.UnderlyingValue(), modifier)
 		if err != nil {
 			return val, err
 		}
@@ -86,7 +88,7 @@ func replaceDeepVal(ctx context.Context, v attr.Value, search, replace string) (
 		if val.IsNull() || val.IsUnknown() {
 			return val, nil
 		}
-		return basetypes.NewStringValue(strings.ReplaceAll(val.ValueString(), search, replace)), nil
+		return basetypes.NewStringValue(modifier(val.ValueString())), nil
 	case basetypes.ObjectValue:
 		if val.IsNull() || val.IsUnknown() {
 			return val, nil
@@ -94,7 +96,7 @@ func replaceDeepVal(ctx context.Context, v attr.Value, search, replace string) (
 		attrs := val.Attributes()
 		newAttrs := make(map[string]attr.Value, len(attrs))
 		for k, attrV := range attrs {
-			newAttrV, err := replaceDeepVal(ctx, attrV, search, replace)
+			newAttrV, err := replaceDeepVal(ctx, attrV, modifier)
 			if err != nil {
 				return val, err
 			}
@@ -112,7 +114,7 @@ func replaceDeepVal(ctx context.Context, v attr.Value, search, replace string) (
 		elems := val.Elements()
 		newElems := make(map[string]attr.Value, len(elems))
 		for k, elemV := range elems {
-			newElemV, err := replaceDeepVal(ctx, elemV, search, replace)
+			newElemV, err := replaceDeepVal(ctx, elemV, modifier)
 			if err != nil {
 				return val, err
 			}
@@ -128,7 +130,7 @@ func replaceDeepVal(ctx context.Context, v attr.Value, search, replace string) (
 		elems := val.Elements()
 		newElems := make([]attr.Value, len(elems))
 		for i, elemV := range elems {
-			newElemV, err := replaceDeepVal(ctx, elemV, search, replace)
+			newElemV, err := replaceDeepVal(ctx, elemV, modifier)
 			if err != nil {
 				return val, err
 			}
@@ -144,7 +146,7 @@ func replaceDeepVal(ctx context.Context, v attr.Value, search, replace string) (
 		elems := val.Elements()
 		newElems := make([]attr.Value, len(elems))
 		for i, elemV := range elems {
-			newElemV, err := replaceDeepVal(ctx, elemV, search, replace)
+			newElemV, err := replaceDeepVal(ctx, elemV, modifier)
 			if err != nil {
 				return val, err
 			}
@@ -160,7 +162,7 @@ func replaceDeepVal(ctx context.Context, v attr.Value, search, replace string) (
 		elems := val.Elements()
 		newElems := make([]attr.Value, len(elems))
 		for i, elemV := range elems {
-			newElemV, err := replaceDeepVal(ctx, elemV, search, replace)
+			newElemV, err := replaceDeepVal(ctx, elemV, modifier)
 			if err != nil {
 				return val, err
 			}

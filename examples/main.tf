@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     forefront = {
-      source = "magnus-ffcg/terraform-provider-forefront"
+      source = "magnus-ffcg/forefront"
     }
   }
 }
@@ -20,3 +20,17 @@ output "replace_deep_example" {
     "key2" = "another foo thing"
   }, "foo", "baz")
 }
+
+output "replace_deep_map_example" {
+  value = provider::forefront::replace_deep_map({
+    "nested_list" = [
+      { "sub_key" = "foo is bar" }
+    ],
+    "key2" = "another foo thing and world"
+    }, {
+    "foo"   = "baz"
+    "world" = "earth"
+    "bar"   = "qux"
+  })
+}
+

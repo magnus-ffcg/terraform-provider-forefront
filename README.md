@@ -8,6 +8,8 @@ This is a custom Terraform Provider containing utility functions (like deep map/
   - Returns a value from a map given a key. If the key is not found, returns the `default`.
 - `provider::forefront::replace_deep(collection, search, replace)`
   - Recursively walks through any complex object (maps, lists, sets, tuples, objects) to find all string values and replaces all occurrences of `search` with `replace`.
+- `provider::forefront::replace_deep_map(collection, lookup_map)`
+  - Recursively walks through any complex object to find all string values and replaces multiple substrings based on a lookup map of find-replace pairs.
 
 ## Setup and Usage
 
@@ -17,7 +19,7 @@ To use this provider in your Terraform configuration, add the following to your 
 terraform {
   required_providers {
     forefront = {
-      source = "magnus-ffcg/terraform-provider-forefront"
+      source = "magnus-ffcg/forefront"
     }
   }
 }
